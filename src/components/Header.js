@@ -16,6 +16,7 @@ const Header = (props) => {
         signInWithPopup(auth, provider)
             .then((result) => {
                 setUser(result.user);
+                
             })
             .catch((error) => {
                 alert(error.message);
@@ -25,7 +26,7 @@ const Header = (props) => {
     const setUser = (user) => {
         dispatch(
             setUserLoginDetails({
-            namer: user.displayName,
+            name: user.displayName,
             email: user.email,
             photo: user.photoURL,
             })
