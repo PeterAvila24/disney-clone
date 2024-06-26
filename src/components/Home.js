@@ -1,17 +1,71 @@
 import styled from 'styled-components'
 import ImgSlider from './ImgSlider';
 import Viewers from './Viewers';
-import Recommend from './Recommend';
+import Recommends from './Recommends';
 import NewDisney from './NewDisney';
 import Originals from './Originals';
 import Trending from './Trending';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { collection, onSnapshot } from 'firebase/firestore'
+import db from "../firebase";
+import { setMovies } from '../features/movie/movieSlice';
+import { selectUserName } from "../features/user/userSlice";
+
+
 const Home = (props) => {
+    const dispatch = useDispatch();
+    const userName = useSelector(selectUserName);
+
+    const recommends = useRef([]);
+    const newDisneys = useRef([]);
+    const originals = useRef([]);
+    const trending = useRef([]);
+    
+  
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, 'movies'), (snapshot) => {
+            snapshot.docs.forEach((doc) => {
+                switch (doc.data().type) {
+                    case 'recommend':
+                        recommends.current = [...recommends.current, { id: doc.id, ...doc.data() }];
+                        break;
+                    case 'new':
+                        newDisneys.current = [...newDisneys.current, { id: doc.id, ...doc.data() }];
+                        break;
+                    case 'original':
+                        originals.current = [...originals.current, { id: doc.id, ...doc.data() }];
+                        break;
+                    case 'trending':
+                        trending.current = [...trending.current, { id: doc.id, ...doc.data() }];
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            dispatch(setMovies({
+                recommend: recommends.current,
+                newDisney: newDisneys.current,
+                original: originals.current,
+                trending: trending.current,
+            }));
+        });
+
+        // Clean up the onSnapshot listener when the component unmounts
+        return () => unsubscribe();
+
+    }, [userName, dispatch]);
+
+
+
     return( 
         <Container>
 
             <ImgSlider/>
             <Viewers/>
-            <Recommend/>
+            <Recommends/>
             <NewDisney/>
             <Originals/>
             <Trending/>

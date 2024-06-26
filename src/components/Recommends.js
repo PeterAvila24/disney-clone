@@ -1,35 +1,25 @@
 import React from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectRecommend } from '../features/movie/movieSlice';
 
-const Recommend = (props) => {
+const Recommends = (props) => {
+    const movies = useSelector(selectRecommend);
     return (
         <Container>
             <h4>Recommended For You </h4>
             <Content>
-                <Wrap>
-                <Link to="/">
-                    <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmFbFQLdI2t_IHKK08wPKoLUZ5M72jke257w&s' alt=''/>
-                </Link>
-                </Wrap>
-
-                <Wrap>
-                <Link to="/">
-                    <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmFbFQLdI2t_IHKK08wPKoLUZ5M72jke257w&s' alt=''/>
-                </Link>
-                </Wrap>
-
-                <Wrap>
-                <Link to="/">
-                    <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmFbFQLdI2t_IHKK08wPKoLUZ5M72jke257w&s' alt=''/>
-                </Link>
-                </Wrap>
-
-                <Wrap>
-                <Link to="/">
-                    <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmFbFQLdI2t_IHKK08wPKoLUZ5M72jke257w&s' alt=''/>
-                </Link>
-                </Wrap>
+                {
+                    movies && movies.map((movie, key) => (
+                        <Wrap key={key}>
+                            {movie.id}
+                            <Link to={'/detail/' + movie.id}>
+                                <img src={movie.cardImg} alt={movie.title}/>
+                            </Link>
+                        </Wrap>
+                    ))
+                }
             </Content>
             
         </Container>
@@ -88,4 +78,4 @@ const Wrap = styled.div`
 
 `;
 
-export default Recommend;
+export default Recommends;
